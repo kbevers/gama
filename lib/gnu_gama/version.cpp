@@ -54,26 +54,45 @@ namespace GNU_gama {
   {
     return
 
-      // clang needs to be checked before GNU C, because it defines __GNUC__
+      // clang and icc need to be checked before GNU C, because they
+      // define macro __GNUC__
+
+      /* see https://sourceforge.net/p/predef/wiki/Compilers/
+       *
+       * Notice that the meaning of the __GNUC__ macro has changed
+       * subtly over the years, from identifying the GNU C/C++ compiler
+       * to identifying any compiler that implements the GNU compiler
+       * extensions (see the Feature request - a macro defined for GCC
+       * discussion for further information). For example, the Intel C++
+       * on Linux also defines these macros from version 8.1 (see the
+       * Intel C++ Compiler 8.1 for Linux Release Notes and Intel
+       * Compilers for Linux: Compatibility with GNU Compilers.)
+       *
+       */
+
+
 #if   defined  (__clang__)
-      "clang++ " xstr(__clang_major__) "." xstr(__clang_minor__)
+      "Clang C/C++ " xstr(__clang_major__) "." xstr(__clang_minor__)
+
+#elif defined  (__INTEL_COMPILER)
+      "Intel C/C++ " + std::string(xstr(__INTEL_COMPILER)).substr(0,2) + "."
+                     + std::string(xstr(__INTEL_COMPILER)).substr(2,2)
 
 #elif defined  (__GNUC__)
-      "g++ " xstr(__GNUC__) "." xstr(__GNUC_MINOR__)
+      "GNU C/C++ " xstr(__GNUC__) "." xstr(__GNUC_MINOR__)
 
 #elif defined  (_MSC_VER)
-      // https://msdn.microsoft.com/en-us/library/b0084kay.aspx
-      "msvc++ " + std::string(xstr(_MSC_VER)).substr(0,2) + "."
-                + std::string(xstr(_MSC_VER)).substr(2,2)
+      "Visual C++ " + std::string(xstr(_MSC_VER)).substr(0,2) + "."
+                    + std::string(xstr(_MSC_VER)).substr(2,2)
 
 #else
-      "unknown compiler"
+      "Undetected compiler"
 
 #endif
     ;
   }
 
-  std::string GNU_gama_year = "2018";
+  std::string GNU_gama_year = "2019";
 
 
   int version(const char* program, const char* copyright_holder)

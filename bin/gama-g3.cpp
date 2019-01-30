@@ -26,30 +26,42 @@
 
 namespace
 {
-  const char* arg_input     = 0;
-  const char* arg_output    = 0;
-  const char* arg_algorithm = 0;
-  const char* arg_projeq    = 0;
+  const char* arg_input     = nullptr;
+  const char* arg_output    = nullptr;
+  const char* arg_algorithm = nullptr;
+  const char* arg_projeq    = nullptr;
 
   GNU_gama::Adj::algorithm algorithm;
 
   int error(const char* s) { std::cerr << s << "\n"; return 1; }
 
-  int version(int argc, char* argv[])
+  int arguments(int argc, char* argv[])
   {
-    for (int i=1; i<argc; i++)
-      {
-        // '-arg' is equivalent to '--arg' in gama-g3
-        const std::string a =
-          (*argv[i] == '-' && *(argv[i]+1) == '-') ? argv[i]+1 : argv[i];
-        if (a == "-version")
-            return 1+GNU_gama::version("gama-g3", "Ales Cepek");
-      }
-  }
+    const std::string usage =
+      "\n"
+      "Usage:  gama-g3  [ options ] input  [ output ] \n\n"
 
-  int help(int argc, char* argv[])
-  {
-    bool ok = argc > 1;
+      " input      xml data file name\n"
+      " output     optional output data file name\n\n"
+
+      " --algorithm  envelope | gso | svd | cholesky\n"
+
+      " --project-equations file"
+      "     optional output of project equations in XML\n"
+
+      "\n"
+      " -h         help (this text)\n"
+
+      "\n";
+
+
+    if (argc <= 1)   // no arguments
+      {
+        std::cerr << usage;
+        return 1;
+      }
+
+    bool ok = true;
 
     for (int n=0, i=1; ok && i<argc; i++)
       {
@@ -60,8 +72,13 @@ namespace
 
         if (a == "-h" || a == "-help")
           {
-            ok = false;
-            continue;
+            std::cerr << usage;
+            return 1;
+          }
+        if (a == "-version")
+          {
+            GNU_gama::version("gama-g3", "Ales Cepek");
+            return 1;
           }
         if (a == "-algorithm")
           {
@@ -101,23 +118,8 @@ namespace
 
     if (ok) return 0;
 
-    std::cerr <<
-      "\n"
-      "Usage:  gama-g3  [ options ] input  [ output ] \n\n"
-
-      " input      xml data file name\n"
-      " output     optional output data file name\n\n"
-
-      " --algorithm  envelope | gso | svd | cholesky\n"
-
-      " --project-equations file"
-      "     optional output of project equations in XML\n"
-
-      "\n"
-      " -h         help (this text)\n"
-
-      "\n";
-
+    std::cerr << "\nWrong argument(s)\n";
+    std::cerr << usage;
     return 1;
   }
 
@@ -222,8 +224,7 @@ int main(int argc, char* argv[])
 {
   using namespace GNU_gama::g3;
 
-  if (version(argc, argv)) return 0;
-  if (help(argc, argv)) return 1;
+  if (arguments(argc, argv)) return 1;
 
   try
     {

@@ -19,20 +19,13 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef gama_local_gnu_gama_local_capi_H_C_API_CAPI_H_
-#define gama_local_gnu_gama_local_capi_H_C_API_CAPI_H_
+#include <gnu_gama/local/format.h>
 
-#include <gnu_gama/local/c/api/capi_exception.h>
-#include <gnu_gama/local/c/api/capi_locnet.h>
-#include <gnu_gama/local/c/api/capi_gkfparser.h>
-#include <gnu_gama/local/c/api/capi_output_file.h>
+namespace GNU_gama { namespace local {
 
-#endif
+int Format::coordinates_p = 3;
+int Format::centesimal_degrees_p = 4;
+int Format::standard_deviations_p = 1;
 
-
-
-
-
-
-
+}}
 
